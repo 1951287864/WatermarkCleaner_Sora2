@@ -1,364 +1,563 @@
 <!DOCTYPE html>
-<html lang="zh">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>水印去除工具</title>
-    <!-- 加载 Google Font (Inter) -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- 加载 Tailwind CSS 3.x -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>的库 - 学习与认知的探索</title>
     <style>
-        /* 设置全局字体和背景 */
+        /* ===== 苹果风格设计系统 ===== */
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #fbfbfd;
+            --text-primary: #1d1d1f;
+            --text-secondary: #86868b;
+            --accent: #0071e3;
+            --accent-hover: #0077ed;
+            --border: #d2d2d7;
+            --card-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+            --transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            --like-color: #ff375f;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f7f9fb; /* 极浅的灰色背景 */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 1.5rem; /* 增加整体内边距 */
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* 自定义文件输入框样式，使其更符合苹果风格 */
-        .file-input-wrapper {
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        /* ===== 毛玻璃导航栏（带搜索） ===== */
+        nav {
+            position: fixed;
+            top: 0;
             width: 100%;
-            height: 120px;
-            border: 2px dashed #d1d5db; /* 虚线边框 */
-            border-radius: 1rem; /* 大圆角 */
-            background-color: #ffffff;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            text-align: center;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            z-index: 1000;
+            padding: 0 5%;
         }
 
-        .file-input-wrapper:hover {
-            border-color: #4f46e5; /* 悬停时边框变色 */
-            background-color: #f9f9ff; /* 略微变色 */
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 60px;
         }
-        
-        .file-input-wrapper.active {
-            border-style: solid; /* 文件选中后变实线 */
-            border-color: #10b981;
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            color: var(--text-primary);
         }
-        
-        /* 隐藏原生的文件输入框 */
-        #videoFile {
-            display: none;
+
+        .search-box {
+            flex: 1;
+            max-width: 300px;
+            margin: 0 40px;
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 8px 16px 8px 36px;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            font-size: 14px;
+            background: rgba(0, 0, 0, 0.03);
+            transition: var(--transition);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: var(--bg-primary);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-primary);
+            font-size: 14px;
+            transition: var(--transition);
+            opacity: 0.8;
+        }
+
+        .nav-links a:hover {
+            opacity: 1;
+        }
+
+        /* ===== 主容器 ===== */
+        .container {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 120px 20px 80px;
+        }
+
+        /* ===== Hero 区域 ===== */
+        .hero {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+
+        .hero h1 {
+            font-size: 56px;
+            font-weight: 600;
+            letter-spacing: -1.5px;
+            margin-bottom: 20px;
+            line-height: 1.1;
+        }
+
+        .hero p {
+            font-size: 21px;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* ===== 分类筛选器 ===== */
+        .category-filter {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .category-btn {
+            padding: 8px 20px;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            background: var(--bg-primary);
+            color: var(--text-secondary);
+            font-size: 14px;
+            cursor: pointer;
+            transition: var(--transition);
+            outline: none;
+        }
+
+        .category-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        .category-btn.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        /* ===== 知识卡片列表 ===== */
+        .posts-grid {
+            display: grid;
+            gap: 24px;
+        }
+
+        .post-card {
+            background: var(--bg-primary);
+            border-radius: 18px;
+            padding: 32px;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .post-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.08);
+        }
+
+        .post-header {
+            margin-bottom: 16px;
+        }
+
+        .post-title {
+            font-size: 24px;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+            margin-bottom: 8px;
+            line-height: 1.3;
+        }
+
+        .post-meta {
+            display: flex;
+            gap: 16px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .post-excerpt {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        /* ===== 互动功能区 ===== */
+        .post-actions {
+            display: flex;
+            gap: 24px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border: none;
+            background: none;
+            color: var(--text-secondary);
+            font-size: 14px;
+            cursor: pointer;
+            transition: var(--transition);
+            border-radius: 8px;
+        }
+
+        .action-btn:hover {
+            background: rgba(0, 113, 227, 0.05);
+            color: var(--accent);
+        }
+
+        .action-btn.liked {
+            color: var(--like-color);
+            background: rgba(255, 55, 95, 0.05);
+        }
+
+        .action-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* ===== 悬浮发布按钮 ===== */
+        .fab {
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: white;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 24px rgba(0, 113, 227, 0.3);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+        }
+
+        .fab:hover {
+            background: var(--accent-hover);
+            transform: scale(1.1);
+        }
+
+        /* ===== 响应式 ===== */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 40px;
+            }
+            
+            .hero p {
+                font-size: 18px;
+            }
+            
+            .container {
+                padding-top: 100px;
+            }
+            
+            .post-card {
+                padding: 24px;
+            }
+            
+            .search-box {
+                display: none;
+            }
+            
+            .nav-links {
+                display: none;
+            }
         }
     </style>
 </head>
 <body>
-
-<div id="app" class="w-full max-w-sm sm:max-w-md bg-white p-10 rounded-3xl shadow-xl transition-all duration-300 transform hover:shadow-2xl relative">
-    
-    <!-- 语言切换按钮 (右上角) -->
-    <div class="absolute top-5 right-5 z-10">
-        <select id="languageSelector" onchange="setLanguage(this.value)" class="p-2 text-sm text-gray-600 bg-gray-100 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 border border-transparent hover:border-gray-300 transition duration-150">
-            <option value="zh">中文</option>
-            <option value="en">English</option>
-        </select>
-    </div>
-
-    <!-- 头部信息 -->
-    <header class="mb-10 text-center pt-4">
-        <!-- 柔和的图标 -->
-        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#4f46e5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-3">
-            <rect width="18" height="18" x="3" y="3" rx="2"></rect>
-            <path d="M7 7h.001"></path>
-            <path d="M11 7h2"></path>
-            <path d="M11 17h2"></path>
-            <path d="M17 17h.001"></path>
-            <path d="m10 10 4 4"></path>
-            <path d="m14 10-4 4"></path>
-        </svg>
-        <h1 class="text-3xl font-semibold text-gray-900 mb-2" data-key="title">水印去除工具</h1>
-        <p class="text-gray-500 text-sm font-light" data-key="subtitle">上传视频，即可进行处理。</p>
-    </header>
-
-    <!-- 视频上传区域 (自定义样式) -->
-    <section class="mb-10">
-        <label for="videoFile" class="block text-sm font-medium text-gray-700 mb-2" data-key="upload_label">视频文件上传</label>
-        
-        <label for="videoFile" class="file-input-wrapper" id="dropArea">
-            <div>
-                <!-- 提示图标 -->
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4f46e5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mx-auto mb-1">
-                    <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"></path>
-                    <path d="M12 12v9"></path>
-                    <path d="m15 15-3-3-3 3"></path>
-                </svg>
-                <p id="uploadPrompt" class="text-gray-500 text-sm font-medium" data-key="upload_prompt_default">点击此处选择文件，或拖拽文件到这里</p>
-                <p id="fileNameDisplay" class="mt-1 text-xs text-indigo-600 font-semibold truncate hidden"></p>
+    <!-- 导航栏 -->
+    <nav>
+        <div class="nav-container">
+            <div class="logo">的库</div>
+            <div class="search-box">
+                <span class="search-icon">🔍</span>
+                <input type="text" class="search-input" placeholder="搜索文章、标签..." id="searchInput">
             </div>
-        </label>
-        
-        <input type="file" id="videoFile" accept="video/*" onchange="updateFileName(this)">
-    </section>
+            <div class="nav-links">
+                <a href="#learning">学习</a>
+                <a href="#cognition">认知</a>
+                <a href="#about">关于</a>
+            </div>
+        </div>
+    </nav>
 
-    <!-- 触发处理 -->
-    <button id="processButton" onclick="startProcessing()" class="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-2xl shadow-md text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-4 focus:ring-indigo-300 focus:ring-offset-2 focus:ring-offset-white transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-[1.01]">
-        <span id="buttonText" data-key="button_start">开始</span>
-        <svg id="spinner" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-        </svg>
-    </button>
+    <!-- 主容器 -->
+    <div class="container">
+        <!-- Hero 区域 -->
+        <section class="hero">
+            <h1>的库</h1>
+            <p>构建你的认知操作系统，收藏每一个改变思维的学习瞬间</p>
+        </section>
 
-    <!-- 消息/结果区域 -->
-    <div id="messageBox" class="mt-6 p-4 rounded-xl bg-yellow-50 text-yellow-700 border border-yellow-200 hidden">
-        <p id="messageContent" class="text-sm"></p>
+        <!-- 分类筛选 -->
+        <div class="category-filter">
+            <button class="category-btn active" data-category="all">全部</button>
+            <button class="category-btn" data-category="learning">学习方法</button>
+            <button class="category-btn" data-category="cognition">认知科学</button>
+            <button class="category-btn" data-category="thinking">思维模式</button>
+            <button class="category-btn" data-category="methodology">方法论</button>
+            <button class="category-btn" data-category="reading">阅读笔记</button>
+        </div>
+
+        <!-- 文章列表 -->
+        <div class="posts-grid" id="postsGrid">
+            <!-- 示例文章卡片 1 -->
+            <article class="post-card" data-id="1">
+                <div class="post-header">
+                    <h2 class="post-title">间隔重复：对抗遗忘曲线的科学记忆法</h2>
+                    <div class="post-meta">
+                        <span>2024年1月15日</span>
+                        <span>·</span>
+                        <span>学习方法</span>
+                        <span>·</span>
+                        <span>6分钟阅读</span>
+                    </div>
+                </div>
+                <p class="post-excerpt">
+                    为什么学过的知识总记不住？基于艾宾浩斯遗忘曲线原理，间隔重复算法能帮你将短期记忆转化为长期记忆。本文详解Anki等工具的使用策略...
+                </p>
+                <div class="post-actions">
+                    <button class="action-btn like-btn" onclick="toggleLike(this, 1)">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                        </svg>
+                        <span class="like-count">24</span>
+                    </button>
+                    <button class="action-btn comment-btn" onclick="showComments(1)">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                        </svg>
+                        <span>8 条讨论</span>
+                    </button>
+                    <button class="action-btn share-btn" onclick="shareArticle(1)">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"></path>
+                        </svg>
+                        <span>分享</span>
+                    </button>
+                </div>
+            </article>
+
+            <!-- 示例文章卡片 2 -->
+            <article class="post-card" data-id="2">
+                <div class="post-header">
+                    <h2 class="post-title">费曼技巧：用输出倒逼输入的深度学习方法</h2>
+                    <div class="post-meta">
+                        <span>2024年1月12日</span>
+                        <span>·</span>
+                        <span>学习方法</span>
+                        <span>·</span>
+                        <span>5分钟阅读</span>
+                    </div>
+                </div>
+                <p class="post-excerpt">
+                    "如果你不能简单地解释一件事，说明你还没有真正理解它。" 通过向他人讲解来检验和深化自己的理解，这个方法比被动阅读高效十倍...
+                </p>
+                <div class="post-actions">
+                    <button class="action-btn like-btn" onclick="toggleLike(this, 2)">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                        </svg>
+                        <span class="like-count">42</span>
+                    </button>
+                    <button class="action-btn comment-btn" onclick="showComments(2)">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                        </svg>
+                        <span>15 条讨论</span>
+                    </button>
+                    <button class="action-btn share-btn" onclick="shareArticle(2)">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"></path>
+                        </svg>
+                        <span>分享</span>
+                    </button>
+                </div>
+            </article>
+
+            <!-- 示例文章卡片 3 -->
+            <article class="post-card" data-id="3">
+                <div class="post-header">
+                    <h2 class="post-title">认知卸载：如何通过外部工具解放大脑</h2>
+                    <div class="post-meta">
+                        <span>2024年1月8日</span>
+                        <span>·</span>
+                        <span>认知科学</span>
+                        <span>·</span>
+                        <span>7分钟阅读</span>
+                    </div>
+                </div>
+                <p class="post-excerpt">
+                    大脑不是用来记忆的，而是用来思考的。将信息外部化、结构化，才能真正释放认知资源进行创造性思考。本文介绍Notion/Obsidian等工具的认知科学原理...
+                </p>
+                <div class="post-actions">
+                    <button class="action-btn like-btn" onclick="toggleLike(this, 3)">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
+                        </svg>
+                        <span class="like-count">56</span>
+                    </button>
+                    <button class="action-btn comment-btn" onclick="showComments(3)">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                        </svg>
+                        <span>23 条讨论</span>
+                    </button>
+                    <button class="action-btn share-btn" onclick="shareArticle(3)">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"></path>
+                        </svg>
+                        <span>分享</span>
+                    </button>
+                </div>
+            </article>
+        </div>
     </div>
 
-    <!-- 结果下载链接 (模拟) -->
-    <div id="downloadArea" class="mt-6 p-4 rounded-xl bg-green-50 text-green-700 border border-green-200 hidden">
-        <p class="text-sm font-semibold mb-2 flex items-center" data-key="result_success_title">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2">
-                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                <path d="m9 11 3 3L22 4"></path>
-            </svg>
-            处理完成！
-        </p>
-        <a id="downloadLink" href="#" download="watermark_removed.mp4" class="mt-2 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-xl shadow-sm text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-150" data-key="result_download_button">
-            下载去除水印的视频
-        </a>
-    </div>
+    <!-- 悬浮发布按钮 -->
+    <button class="fab" onclick="publishArticle()" title="发布新文章">+</button>
 
-</div>
+    <script>
+        // ===== 所有互动功能实现 =====
 
-<script>
-    const videoFile = document.getElementById('videoFile');
-    const processButton = document.getElementById('processButton');
-    const buttonText = document.getElementById('buttonText');
-    const spinner = document.getElementById('spinner');
-    const messageBox = document.getElementById('messageBox');
-    const messageContent = document.getElementById('messageContent');
-    const downloadArea = document.getElementById('downloadArea');
-    const downloadLink = document.getElementById('downloadLink');
-    const dropArea = document.getElementById('dropArea');
-    const uploadPrompt = document.getElementById('uploadPrompt');
-    const fileNameDisplay = document.getElementById('fileNameDisplay');
-    const languageSelector = document.getElementById('languageSelector');
-
-    // --- 语言配置 ---
-    const translations = {
-        zh: {
-            title: "水印去除工具",
-            subtitle: "上传视频，即可进行处理。", // 修改点 1: 添加句号
-            upload_label: "视频文件上传",
-            upload_prompt_default: "点击此处选择文件，或拖拽文件到这里",
-            upload_prompt_selected: "文件已选择。点击或拖拽更换。",
-            button_start: "开始", // 修改点 2: 简化为 "开始"
-            button_processing: "正在上传并处理中...",
-            info_processing: (fileName) => `文件 ${fileName} 正在上传。AI 将自动检测并去除水印。请耐心等待...`,
-            error_no_file: "请先选择一个视频文件。",
-            result_success_title: "处理完成！",
-            result_download_button: "下载去除水印的视频",
-            download_filename: "watermark_removed.mp4"
-        },
-        en: {
-            title: "Watermark Remover Tool",
-            subtitle: "Upload your video to start processing.", // 对应修改 1: 添加句号
-            upload_label: "Video File Upload",
-            upload_prompt_default: "Click here to select a file, or drag and drop it here",
-            upload_prompt_selected: "File selected. Click or drag to change.",
-            button_start: "Start", // 对应修改 2: 简化为 "Start"
-            button_processing: "Uploading and Processing...",
-            info_processing: (fileName) => `File ${fileName} is uploading. AI will automatically detect and remove the watermark. Please wait...`,
-            error_no_file: "Please select a video file first.",
-            result_success_title: "Processing Complete!",
-            result_download_button: "Download Watermark-Removed Video",
-            download_filename: "watermark_removed.mp4"
-        }
-    };
-
-    let currentLang = 'zh';
-
-    /**
-     * 根据 data-key 属性更新所有可翻译的 DOM 元素
-     * @param {string} lang - 目标语言代码 ('zh' 或 'en')
-     */
-    function setLanguage(lang) {
-        currentLang = lang;
-        const t = translations[lang];
-        document.querySelectorAll('[data-key]').forEach(el => {
-            const key = el.getAttribute('data-key');
-            if (t[key] && typeof t[key] === 'string') {
-                el.textContent = t[key];
-            }
+        // 1. 搜索功能
+        const searchInput = document.getElementById('searchInput');
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            const posts = document.querySelectorAll('.post-card');
+            
+            posts.forEach(post => {
+                const title = post.querySelector('.post-title').textContent.toLowerCase();
+                const excerpt = post.querySelector('.post-excerpt').textContent.toLowerCase();
+                
+                if (title.includes(query) || excerpt.includes(query)) {
+                    post.style.display = 'block';
+                } else {
+                    post.style.display = query ? 'none' : 'block';
+                }
+            });
         });
+
+        // 2. 分类筛选
+        const categoryBtns = document.querySelectorAll('.category-btn');
+        categoryBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                categoryBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                const category = btn.dataset.category;
+                console.log('筛选分类:', category);
+                
+                // 这里可以添加实际的筛选逻辑
+                // 比如：filterPostsByCategory(category);
+            });
+        });
+
+        // 3. 点赞功能
+        const likeStates = new Map(); // 存储每个用户的点赞状态
         
-        // 更新特殊元素，如下载文件名
-        downloadLink.download = t.download_filename;
-
-        // 更新文件选择区域的提示
-        updateUploadPromptText();
-
-        // 将选中的语言存储到浏览器，以便下次加载时使用
-        localStorage.setItem('lang', lang);
-        languageSelector.value = lang;
-        
-        // 确保页面 title 也更新
-        document.title = t.title;
-    }
-
-    /**
-     * 根据当前文件状态更新上传区域的提示文本
-     */
-    function updateUploadPromptText() {
-        const file = videoFile.files[0];
-        const t = translations[currentLang];
-        
-        if (file) {
-            uploadPrompt.textContent = t.upload_prompt_selected;
-            fileNameDisplay.textContent = file.name;
-        } else {
-            uploadPrompt.textContent = t.upload_prompt_default;
-            fileNameDisplay.textContent = '';
-        }
-    }
-
-    /**
-     * 页面加载时初始化语言
-     */
-    document.addEventListener('DOMContentLoaded', () => {
-        const savedLang = localStorage.getItem('lang') || 'zh';
-        setLanguage(savedLang);
-    });
-    // --- 语言配置结束 ---
-
-    /**
-     * 更新文件名称显示并更新上传区域样式
-     */
-    function updateFileName(input) {
-        if (input.files.length > 0) {
-            fileNameDisplay.classList.remove('hidden');
-            dropArea.classList.add('active');
-        } else {
-            fileNameDisplay.classList.add('hidden');
-            dropArea.classList.remove('active');
-        }
-        updateUploadPromptText();
-    }
-
-    /**
-     * 显示消息（用于错误或提示）
-     */
-    function showMessage(messageKey, type = 'info', fileName = '') {
-        downloadArea.classList.add('hidden');
-        messageBox.classList.remove('hidden', 'bg-red-50', 'text-red-700', 'border-red-200', 'bg-yellow-50', 'text-yellow-700', 'border-yellow-200');
-
-        // 重置样式
-        messageBox.classList.remove('bg-red-50', 'text-red-700', 'border-red-200', 'bg-yellow-50', 'text-yellow-700', 'border-yellow-200');
-
-        if (type === 'error') {
-            messageBox.classList.add('bg-red-50', 'text-red-700', 'border-red-200');
-        } else {
-            messageBox.classList.add('bg-yellow-50', 'text-yellow-700', 'border-yellow-200');
-        }
-        
-        const t = translations[currentLang];
-        // 检查是否为函数模板
-        if (typeof t[messageKey] === 'function') {
-            messageContent.textContent = t[messageKey](fileName);
-        } else {
-            messageContent.textContent = t[messageKey];
-        }
-    }
-
-    /**
-     * 隐藏所有消息区域
-     */
-    function hideMessages() {
-        messageBox.classList.add('hidden');
-        downloadArea.classList.add('hidden');
-    }
-
-    /**
-     * 拖拽事件处理
-     */
-    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-      dropArea.addEventListener(eventName, preventDefaults, false)
-    });
-
-    function preventDefaults (e) {
-      e.preventDefault()
-      e.stopPropagation()
-    }
-
-    // 高亮拖拽区域
-    ['dragenter', 'dragover'].forEach(eventName => {
-      dropArea.addEventListener(eventName, () => dropArea.style.borderColor = '#818cf8', false)
-    });
-    // 移除高亮
-    ['dragleave', 'drop'].forEach(eventName => {
-      dropArea.addEventListener(eventName, () => dropArea.style.borderColor = '#d1d5db', false)
-    });
-
-    // 处理文件拖放
-    dropArea.addEventListener('drop', handleDrop, false);
-
-    function handleDrop(e) {
-      const dt = e.dataTransfer;
-      const files = dt.files;
-      
-      if (files.length > 0) {
-        // 将文件赋值给文件输入框
-        videoFile.files = files;
-        updateFileName(videoFile);
-      }
-    }
-
-    /**
-     * 模拟开始处理过程
-     */
-    function startProcessing() {
-        hideMessages();
-
-        const file = videoFile.files[0];
-        const t = translations[currentLang];
-
-        if (!file) {
-            showMessage('error_no_file', 'error');
-            return;
-        }
-
-        // 1. 启动加载状态
-        processButton.disabled = true;
-        buttonText.textContent = t.button_processing;
-        spinner.classList.remove('hidden');
-        showMessage('info_processing', 'info', file.name);
-
-
-        // =========================================================
-        // 🚨 关键说明：此处模拟了对您未来 Python 服务器 API 的调用
-        // ---------------------------------------------------------
-        // 在真实的部署中，您需要将以下 fetch() 替换为指向您实际运行 Python 后端的 URL。
-        // =========================================================
-
-        // 模拟 API 延迟 (例如 5 秒)
-        setTimeout(() => {
-            // 2. 停止加载状态
-            processButton.disabled = false;
-            buttonText.textContent = t.button_start;
-            spinner.classList.add('hidden');
-
-            // 3. 模拟成功结果
+        function toggleLike(btn, postId) {
+            const likeCountSpan = btn.querySelector('.like-count');
+            let count = parseInt(likeCountSpan.textContent);
             
-            // 🚨 注意：由于没有真实的服务器，这里无法提供真正的下载链接。
-            const mockDownloadUrl = "https://placehold.co/600x400/000000/FFFFFF/png?text=Processed+Video"; 
+            if (btn.classList.contains('liked')) {
+                btn.classList.remove('liked');
+                likeCountSpan.textContent = count - 1;
+                likeStates.set(postId, false);
+            } else {
+                btn.classList.add('liked');
+                likeCountSpan.textContent = count + 1;
+                likeStates.set(postId, true);
+            }
             
-            // 显示下载区域
-            messageBox.classList.add('hidden');
-            downloadArea.classList.remove('hidden');
-            downloadLink.href = mockDownloadUrl; 
+            // 可以在这里调用后端API同步数据
+            console.log(`文章 ${postId} 点赞状态:`, likeStates.get(postId));
+        }
 
-        }, 5000); // 模拟 5 秒处理时间
-    }
-</script>
+        // 4. 评论功能
+        function showComments(postId) {
+            alert(`打开文章 ${postId} 的评论弹窗\n\n这里可以展示：\n- 已有评论列表\n- 发表评论的输入框\n- 点赞、回复等互动`);
+            // 实际实现：打开一个模态框展示评论
+        }
 
+        // 5. 分享功能
+        function shareArticle(postId) {
+            const postCard = document.querySelector(`[data-id="${postId}"]`);
+            const title = postCard.querySelector('.post-title').textContent;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: title,
+                    text: '来自「的库」的优质内容',
+                    url: window.location.href + `#post-${postId}`
+                });
+            } else {
+                // 复制链接到剪贴板
+                navigator.clipboard.writeText(window.location.href + `#post-${postId}`).then(() => {
+                    alert('链接已复制到剪贴板！');
+                });
+            }
+        }
+
+        // 6. 发布文章
+        function publishArticle() {
+            alert('打开发布编辑器\n\n功能包括：\n- Markdown编辑器\n- 分类选择\n- 标签系统\n- 草稿保存');
+            // 实际实现：跳转到发布页面或打开编辑器模态框
+        }
+
+        // 7. 文章卡片点击（跳转到详情）
+        document.querySelectorAll('.post-card').forEach(card => {
+            card.addEventListener('click', (e) => {
+                // 如果点击的是按钮区域，不跳转
+                if (e.target.closest('.post-actions')) return;
+                
+                const postId = card.dataset.id;
+                console.log(`跳转到文章 ${postId} 详情页`);
+                // window.location.href = `/post/${postId}`;
+            });
+        });
+    </script>
 </body>
 </html>
